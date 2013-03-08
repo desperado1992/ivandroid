@@ -5,6 +5,8 @@ package com.example.ejercicio3;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,13 +17,14 @@ public class InterestingPointActivity extends Activity implements OnClickListene
 
 	String sDescription = null;
 	String coord = null;
+
+	InterestingPointEnum item = null;
 	
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.interestingpoint);
 		
 		Bundle extras = getIntent().getExtras();
-		InterestingPointEnum item = null;
 		
 		if (extras != null){
 			item = (InterestingPointEnum) extras.get("item");
@@ -63,6 +66,12 @@ public class InterestingPointActivity extends Activity implements OnClickListene
 			
 		}
 		
+		buttonsEvents();
+		
+	}
+
+
+	private void buttonsEvents() {
 		Button btnDescription = (Button) findViewById(R.id.btnDescription);
 		btnDescription.setOnClickListener(this);
 
@@ -78,7 +87,6 @@ public class InterestingPointActivity extends Activity implements OnClickListene
 
 		TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
 		txtDescription.setBackgroundColor(Color.WHITE);
-		
 	}
 
 
@@ -87,7 +95,7 @@ public class InterestingPointActivity extends Activity implements OnClickListene
 	    Button btn = (Button)v;
 	    String buttonText = btn.getText().toString();
 	    
-	    if(buttonText.equals("Description")){
+	    if(buttonText.contains("Description")){
 
 			TextView txtDescription = (TextView) findViewById(R.id.txtDescription);
 			txtDescription.setText(sDescription);
@@ -109,8 +117,10 @@ public class InterestingPointActivity extends Activity implements OnClickListene
 				startActivity(iGallery);
 			}
 	    }
-	    else if(buttonText.contains("Take Photo")){
-	    
+	    else if(buttonText.contains("Take")){
+	    	Intent oCameraIntent = new Intent(InterestingPointActivity.this, CameraIntent.class);
+	    	oCameraIntent.putExtra("item", item);
+			startActivity(oCameraIntent);
 	    }
 	}
 

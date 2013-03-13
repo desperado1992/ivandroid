@@ -160,7 +160,7 @@ public class CameraIntent extends Activity implements SurfaceHolder.Callback{
 			private File createImageFile() throws IOException {
 				// Create an image file name
 				String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-				String imageFileName = JPEG_FILE_SUFFIX + timeStamp + "_";
+				String imageFileName =  timeStamp + "_";
 				File albumF = getAlbumDir();
 				File imageF = File.createTempFile(imageFileName, JPEG_FILE_SUFFIX, albumF);
 				return imageF;
@@ -172,7 +172,7 @@ public class CameraIntent extends Activity implements SurfaceHolder.Callback{
 				if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
 
 					storageDir = new File(Environment.getExternalStorageDirectory()
-							.toString() + "/" + item.name());
+							.toString() + "/Ejercicio3/" + item.name());
 
 					if (storageDir != null) {
 						if (! storageDir.mkdirs()) {

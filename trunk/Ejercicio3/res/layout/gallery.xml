@@ -5,7 +5,7 @@
 
     <Gallery
         android:id="@+id/gallery"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_x="40dp"
         android:layout_y="30dp" />

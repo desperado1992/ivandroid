@@ -30,7 +30,7 @@ public class ImageAdapter extends BaseAdapter {
         
 
 		folder = new File(Environment.getExternalStorageDirectory()
-                .toString() + "/" + item.name());
+                .toString() + "/Ejercicio3/" + item.name());
         allFiles = folder.list();
         if(allFiles == null){
         	allFiles = new String[0];

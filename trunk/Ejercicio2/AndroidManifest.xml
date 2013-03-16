@@ -21,31 +21,27 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>        
+        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonCircleActivity">         
         </activity>
-        
-        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonCircleActivity"   >         
+        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonFilledCircleActivity">         
         </activity>
-        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonFilledCircleActivity"   >         
+        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonFilledRectActivity">         
         </activity>
-        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonFilledRectActivity"   >         
+        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonRectActivity">         
         </activity>
-        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonRectActivity"   >         
+        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonSurpriseActivity">         
         </activity>
-        <activity android:name="com.example.ejercicio2.buttonsActivities.ButtonSurpriseActivity"   >         
+        <activity android:name="com.example.ejercicio2.views.CircleView">         
         </activity>
-        <activity android:name="com.example.ejercicio2.views.CircleView"   >         
+        <activity android:name="com.example.ejercicio2.views.FilledCircleView">         
         </activity>
-        <activity android:name="com.example.ejercicio2.views.FilledCircleView"   >         
+        <activity android:name="com.example.ejercicio2.views.FilledRectView">         
         </activity>
-        <activity android:name="com.example.ejercicio2.views.FilledRectView"   >         
+        <activity android:name="com.example.ejercicio2.views.RectView">         
         </activity>
-        <activity android:name="com.example.ejercicio2.views.RectView"   >         
-        </activity>
-        <activity android:name="com.example.ejercicio2.views.SurpriseView"   >         
-        </activity>
-        
-        
-        
+        <activity android:name="com.example.ejercicio2.views.SurpriseView">         
+        </activity>        
     </application>
 
 </manifest>

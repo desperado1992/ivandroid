@@ -31,9 +31,10 @@ public final class R {
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int camera=0x7f030001;
-        public static final int gallery=0x7f030002;
-        public static final int interestingpoint=0x7f030003;
-        public static final int map=0x7f030004;
+        public static final int camerapreview=0x7f030002;
+        public static final int gallery=0x7f030003;
+        public static final int interestingpoint=0x7f030004;
+        public static final int map=0x7f030005;
     }
     public static final class menu {
         public static final int activity_main=0x7f060000;

@@ -122,6 +122,12 @@ public class InterestingPointActivity extends Activity implements OnClickListene
 	    	oCameraIntent.putExtra("item", item);
 			startActivity(oCameraIntent);
 	    }
+
+	    else if(buttonText.contains("Take")){
+	    	Intent oCameraPreview = new Intent(InterestingPointActivity.this, CameraPreviewActivity.class);
+	    	oCameraPreview.putExtra("item", item);
+			startActivity(oCameraPreview);
+	    }
 	}
 
 }

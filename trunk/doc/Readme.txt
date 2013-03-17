@@ -24,7 +24,7 @@ Ejercicio3
 	Map.java			- MapActivity que muestra el mapa google con la localización que le indiquemos
 	ImageAdapter.java		- BaseAdapter que deposita la colección de imágenes en la gallería.	
 	
-Ejercicio3
+Ejercicio4
 	MainActivity.java		- Activity de la pantalla principal.
 	CameraIntent.java		- Activity que abre la camara y permite capturar imágenes
 	GalleryView.java		- Activity que muestra todas las imágenes en una galería. 

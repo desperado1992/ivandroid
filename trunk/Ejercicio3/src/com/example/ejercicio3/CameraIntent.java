@@ -3,16 +3,19 @@ package com.example.ejercicio3;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -23,9 +26,9 @@ import android.widget.Button;
 
 public class CameraIntent extends Activity implements SurfaceHolder.Callback {
 	Camera oCamera;
-	SurfaceView surfaceView;
-	SurfaceHolder surfaceHolder;
-	boolean previewing = false;
+	SurfaceView oSurfaceView;
+	SurfaceHolder oSurfaceHolder;
+	boolean bPreviewing = false;
 	InterestingPointEnum item = null;
 
 	private static final String JPEG_FILE_SUFFIX = ".jpg";
@@ -37,10 +40,10 @@ public class CameraIntent extends Activity implements SurfaceHolder.Callback {
 		setContentView(R.layout.camera);
 
 		getWindow().setFormat(PixelFormat.UNKNOWN);
-		surfaceView = (SurfaceView) findViewById(R.id.camerapreview);
-		surfaceHolder = surfaceView.getHolder();
-		surfaceHolder.addCallback(this);
-		surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		oSurfaceView = (SurfaceView) findViewById(R.id.camerapreview);
+		oSurfaceHolder = oSurfaceView.getHolder();
+		oSurfaceHolder.addCallback(this);
+		oSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
 		Bundle extras = getIntent().getExtras();
 
@@ -68,38 +71,67 @@ public class CameraIntent extends Activity implements SurfaceHolder.Callback {
 
 	
 	@Override
-	public void surfaceCreated(SurfaceHolder arg0) {
-		// TODO Auto-generated method stub
-		oCamera = Camera.open();
-
+	public void surfaceCreated(SurfaceHolder arg0) {		
+			oCamera = Camera.open();
 	}
+	
 	
 
 	@Override
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
-//		if (previewing) {
-//			oCamera.stopPreview();
-//			previewing = false;
-//		}
-//
-//		if (oCamera != null) {
-//			try {
-//				oCamera.setPreviewDisplay(surfaceHolder);
-//				oCamera.startPreview();
-//				previewing = true;
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		
-		Camera.Parameters parameters = oCamera.getParameters();
-		parameters.setPreviewSize(800, 480); // no ponemos el ancho y el alto si no estos numeros porque si no
-		// no funciona, para la versi—n 2.1 aœn no funciona bien. Aunque el telefono tenga otra resoluci—n funciona bien.
-        oCamera.setParameters(parameters);
-        oCamera.startPreview();
+		if (bPreviewing) {
+			oCamera.stopPreview();
+			bPreviewing = false;
+		}
+
+		if (oCamera != null) {
+
+			try {
+				setDisplayOrientation();
+				oCamera.setPreviewDisplay(oSurfaceHolder);
+				oCamera.startPreview();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			bPreviewing = true;
+		}
 	}
+	
+	protected void setDisplayOrientation(){
+		 if (Integer.parseInt(Build.VERSION.SDK) >= 8)
+		        setDisplayOrientation(90);
+		    else
+		    {
+		    	Camera.Parameters oParameters = oCamera.getParameters();
+		        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+		        {
+		        	oParameters.set("orientation", "portrait");
+		        	oParameters.set("rotation", 90);
+		        }
+		        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+		        {
+		        	oParameters.set("orientation", "landscape");
+		        	oParameters.set("rotation", 90);
+		        }
+		        oCamera.setParameters(oParameters);
+		    }   
+	}
+	
+	protected void setDisplayOrientation( int angle){
+	    Method downPolymorphic;
+	    try
+	    {
+	        downPolymorphic = oCamera.getClass().getMethod("setDisplayOrientation", new Class[] { int.class });
+	        if (downPolymorphic != null)
+	            downPolymorphic.invoke(oCamera, new Object[] { angle });
+	    }
+	    catch (Exception e1)
+	    {
+	    }
+	}
+	
 
 	@Override
 	public void surfaceDestroyed(SurfaceHolder arg0) {
@@ -107,7 +139,7 @@ public class CameraIntent extends Activity implements SurfaceHolder.Callback {
 		oCamera.stopPreview();
 		oCamera.release();
 		oCamera = null;
-		previewing = false;
+		bPreviewing = false;
 
 	}
 

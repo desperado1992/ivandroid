@@ -30,7 +30,9 @@
         <activity android:name="com.example.ejercicio3.Map"></activity>
         <activity android:name="com.example.ejercicio3.InterestingPointActivity"></activity>
         <activity android:name="com.example.ejercicio3.GalleryView"></activity>
-        <activity android:name="com.example.ejercicio3.CameraIntent"></activity>
+        <activity android:name="com.example.ejercicio3.CameraIntent"            
+          android:screenOrientation="landscape">
+        </activity>        
     </application>
 
 </manifest>

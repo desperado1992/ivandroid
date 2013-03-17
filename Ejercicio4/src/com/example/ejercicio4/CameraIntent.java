@@ -9,6 +9,7 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.PixelFormat;
@@ -205,10 +206,12 @@ public class CameraIntent extends Activity implements SurfaceHolder.Callback {
 
 		if (Environment.MEDIA_MOUNTED.equals(Environment
 				.getExternalStorageState())) {
+			Resources res = getResources();
+			String appName = res.getString(R.string.app_name);
 
 			storageDir = new File(Environment.getExternalStorageDirectory()
-					.toString() + "/Ejercicio3/" + item.name());
-
+					.toString() + "/" + appName +"/" + item.name());
+			
 			if (storageDir != null) {
 				if (!storageDir.mkdirs()) {
 					if (!storageDir.exists()) {

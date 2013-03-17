@@ -3,11 +3,13 @@ package com.example.ejercicio4.ImageAdapters;
 import java.io.File;
 import java.util.ArrayList;
 
+import com.example.ejercicio4.CameraIntent;
 import com.example.ejercicio4.InterestingPointEnum;
 import com.example.ejercicio4.R;
 import com.example.ejercicio4.R.drawable;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -27,10 +29,12 @@ public class ImageAdapter extends BaseAdapter {
 
     public ImageAdapter(Context c, InterestingPointEnum item) {
         mContext = c;      
-        
+
+		Resources res = mContext.getResources();
+		String appName = res.getString(R.string.app_name);
 
 		folder = new File(Environment.getExternalStorageDirectory()
-                .toString() + "/Ejercicio3/" + item.name());
+                .toString() + "/" + appName +"/" + item.name());
         allFiles = folder.list();
         if(allFiles == null){
         	allFiles = new String[0];

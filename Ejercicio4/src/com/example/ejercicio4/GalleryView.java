@@ -6,6 +6,7 @@ import com.example.ejercicio4.ImageAdapters.ImageAdapter;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -34,10 +35,12 @@ public class GalleryView extends Activity{
 		
 		if (extras != null){
 			item = (InterestingPointEnum) extras.get("item");
-			
+
+			Resources res = getResources();
+			String appName = res.getString(R.string.app_name);
 
 			folder = new File(Environment.getExternalStorageDirectory()
-	                .toString() + "/Ejercicio3/" + item.name());
+	                .toString() + "/" + appName +"/" + item.name());
 	        allFiles = folder.list();
 	        if(allFiles == null){
 	        	allFiles = new String[0];

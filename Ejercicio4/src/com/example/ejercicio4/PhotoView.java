@@ -33,22 +33,11 @@ public class PhotoView extends Activity {
 
 		if (extras != null) {
 			sImagePath = (String) extras.get("ImagePath");
-			InputStream in = null;
-			try {
-				in = getAssets().open(sImagePath);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			if (in != null) {
-				oBitmap = BitmapFactory.decodeStream(in);
-
-			}
+			ImageView oImageView = (ImageView)  findViewById(R.id.imageView1);
+			oImageView.setImageBitmap(BitmapFactory.decodeFile(sImagePath));
 		}
 		
 
-		ImageView oImageView = (ImageView)  findViewById(R.id.imageView1);
-		oImageView.setImageBitmap(oBitmap);
 
 		ButtonCircleActivity oButtonCircleActivity = new ButtonCircleActivity();
 

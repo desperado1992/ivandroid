@@ -33,7 +33,7 @@ public class FilledRectView extends View{
 			super.onDraw(canvas);
 			oPaint.setColor(color);
 			oPaint.setStyle(Style.FILL);
-			canvas.drawRect(110, 165, 150, 300, oPaint);
+			canvas.drawRect(110, 122, 150, 190, oPaint);
 			
 	}
 	

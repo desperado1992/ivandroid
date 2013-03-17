@@ -42,7 +42,7 @@ public class CircleView extends View{
 			oPaint.setColor(color);
 			oPaint.setStrokeWidth(3);
 			oPaint.setStyle(Style.STROKE);
-			canvas.drawCircle(170, 190, 10, oPaint);
+			canvas.drawCircle(170, 140, 10, oPaint);
 			
 
 			color = Color.BLACK;
@@ -52,7 +52,7 @@ public class CircleView extends View{
 			oPaint.setColor(color);
 			oPaint.setStrokeWidth(3);
 			oPaint.setStyle(Style.STROKE);
-			canvas.drawCircle(80, 225, 15, oPaint);
+			canvas.drawCircle(80, 167, 15, oPaint);
 			
 	}
 	

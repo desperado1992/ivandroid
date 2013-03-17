@@ -33,8 +33,8 @@ public class SurpriseView extends View{
 		    paint.setColor(Color.GREEN);    
 
 		    Point point1_draw = new Point(130, 40);        
-		    Point point2_draw = new Point(110, 165);    
-		    Point point3_draw = new Point(150, 165);
+		    Point point2_draw = new Point(110, 122);    
+		    Point point3_draw = new Point(150, 122);
 
 
 		    Path path = new Path();

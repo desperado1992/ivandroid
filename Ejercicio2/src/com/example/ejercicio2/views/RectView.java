@@ -34,7 +34,7 @@ public class RectView extends View{
 		oPaint.setColor(color);
 		oPaint.setStrokeWidth(4);
 		oPaint.setStyle(Style.STROKE);
-		canvas.drawRect(110, 165, 150, 300, oPaint);
+		canvas.drawRect(110, 122, 150, 190, oPaint);
 		
 			
 	}

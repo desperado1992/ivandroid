@@ -33,7 +33,7 @@ public class FilledCircleView extends View{
 			super.onDraw(canvas);
 			oPaint.setColor(color);
 			oPaint.setStyle(Style.FILL);
-			canvas.drawCircle(170, 190, 10, oPaint);
+			canvas.drawCircle(170, 140, 10, oPaint);
 			
 
 			color = Color.BLACK;			
@@ -41,7 +41,7 @@ public class FilledCircleView extends View{
 			super.onDraw(canvas);
 			oPaint.setColor(color);
 			oPaint.setStyle(Style.FILL);
-			canvas.drawCircle(80, 225, 15, oPaint);
+			canvas.drawCircle(80, 167, 15, oPaint);
 	}
 	
 

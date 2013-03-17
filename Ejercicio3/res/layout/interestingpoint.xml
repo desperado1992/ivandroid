@@ -12,33 +12,6 @@
         android:layout_alignParentTop="true"
         android:text="Description" />
 
-    <Button
-        android:id="@+id/btnPhotos"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btnDescription"
-        android:layout_marginTop="29dp"
-        android:text="Photos" />
-
-    <Button
-        android:id="@+id/btnMap"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btnPhotos"
-        android:layout_marginTop="32dp"
-        android:text="See in Map" />
-
-    <Button
-        android:id="@+id/btnTakePhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/btnMap"
-        android:layout_marginTop="33dp"
-        android:text="Take a Photo" />
-
     <TextView
         android:id="@+id/txtDescription"
         android:layout_width="match_parent"
@@ -47,5 +20,31 @@
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/btnTakePhoto"
         android:text="" />
+
+    <Button
+        android:id="@+id/btnPhotos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/btnDescription"
+        android:layout_below="@+id/btnDescription"
+        android:text="Photos" />
+
+    <Button
+        android:id="@+id/btnTakePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnMap"
+        android:layout_below="@+id/btnMap"
+        android:text="Take a Photo" />
+
+    <Button
+        android:id="@+id/btnMap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/btnPhotos"
+        android:layout_below="@+id/btnPhotos"
+        android:text="See in Map" />
 
 </RelativeLayout>

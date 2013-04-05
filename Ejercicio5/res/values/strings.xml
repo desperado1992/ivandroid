@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Ejercicio4</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="sTitle">Altea Interesting Points</string>
+    <string name="btnIntend">0</string>
+    <string name="btnIntendS">Take Photo S</string>
+
+</resources>

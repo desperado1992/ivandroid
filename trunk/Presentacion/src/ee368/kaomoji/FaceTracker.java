@@ -62,9 +62,7 @@ public class FaceTracker {
   public void processFrame(Mat mRgba, Mat mGray) {
     if (faceDetector != null) {
     	List<Rect> faces = faceDetector.detect(mGray);
-      if (faces.size() > 0) {
-        Rect faceRect = face.update(faces.get(0));
-
+      for(Rect faceRect: faces) {
         Point delta = face.getDelta();
 
         //drawRect(mRgba, faceRect, FACE_COLOR);

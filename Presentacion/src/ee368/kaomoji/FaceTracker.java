@@ -81,8 +81,29 @@ public class FaceTracker {
         List<Rect> eyes = eyeDetector.detect(mGray, eyeROI);
         
 
-    	Rect leftEyeRect = eyes.size() > 0 ? eyes.get(0) : null;
-    	Rect rightEyeRect = eyes.size() > 1 ? eyes.get(1) : null;
+    	Rect leftEyeRect = null;
+    	Rect rightEyeRect = null;
+        
+        if(eyes.size() > 1){
+        	int xMinEye = -1;
+        	for(Rect oEye: eyes){
+        		if(oEye.x < xMinEye){
+        			leftEyeRect = oEye;
+        		}        		
+        	}
+        	
+
+        	for(Rect oEye: eyes){
+        		if(leftEyeRect.x + leftEyeRect.width < oEye.x){
+        			rightEyeRect = oEye;
+        		}        		
+        	}
+        	
+        }
+        else{
+        	leftEyeRect = eyes.size() > 0 ? eyes.get(0) : null;
+        }
+
         
         if (leftEyeRect != null && rightEyeRect != null){
         	if(leftEyeRect.x > rightEyeRect.x) {

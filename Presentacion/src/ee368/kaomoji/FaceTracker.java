@@ -14,6 +14,9 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import ee368.kaomoji.threads.EyeRunnableThread;
+import ee368.kaomoji.threads.MouthRunnableThread;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -60,141 +63,172 @@ public class FaceTracker {
   }
   
   public void processFrame(Mat mRgba, Mat mGray) {
+    if (Options.activeKaomoji < 0) {
+      return;
+    }
+        
     if (faceDetector != null) {
     	List<Rect> faces = faceDetector.detect(mGray);
       for(Rect faceRect: faces) {
         Point delta = face.getDelta();
-
-        //drawRect(mRgba, faceRect, FACE_COLOR);
-        // Detect eyes.
-        /*Rect eyeROI = new Rect(
-            faceRect.x, (int)(faceRect.y + (faceRect.height / 5.5)),
-            faceRect.width, (int)(faceRect.height / 3.0));*/
         
-        Rect eyeROI = new Rect(
-        faceRect.x, faceRect.y,
-        faceRect.width, (int)(faceRect.height / 2));
+        List<Thread> lThreads = new ArrayList<Thread>();
         
-        //Rect eyeROI = faceRect;
-        List<Rect> eyes = eyeDetector.detect(mGray, eyeROI);
+        MouthRunnableThread rMouthThread = new MouthRunnableThread(mGray, faceRect, delta, mouthDetector, mouth);
+        Thread oMouthThread = new Thread(rMouthThread);
+        lThreads.add(oMouthThread);
+       
+        Rect leftEyeROI = new Rect(
+        faceRect.x, faceRect.y +(int)(faceRect.height / 5),
+        (int)(faceRect.width *2/ 3), (int)(faceRect.height * 2 / 5));
         
-
-    	Rect leftEyeRect = null;
-    	Rect rightEyeRect = null;
+        EyeRunnableThread rLeftEyeThread = new EyeRunnableThread(mGray, faceRect, delta, eyeDetector, leftEye, leftEyeROI);
+        Thread oLeftEyeThread = new Thread(rLeftEyeThread);
+        lThreads.add(oLeftEyeThread);
         
-        if(eyes.size() > 1){
-        	int xMinEye = -1;
-        	for(Rect oEye: eyes){
-        		if(oEye.x < xMinEye){
-        			leftEyeRect = oEye;
-        		}        		
-        	}
+        
+        Rect rightEyeROI = new Rect(
+        faceRect.x + (int)(faceRect.width / 3), faceRect.y+(int)(faceRect.height / 5),
+        (int)(faceRect.width *2/ 3), (int)(faceRect.height * 2 / 5));
+        
+        EyeRunnableThread rRightEyeThread = new EyeRunnableThread(mGray, faceRect, delta, eyeDetector, rightEye, rightEyeROI);
+        Thread oRightEyeThread = new Thread(rRightEyeThread);
+        lThreads.add(oRightEyeThread);
+        
+        for(Thread oThread : lThreads){
+        	oThread.start();
+        }
+        
+        for(Thread oThread : lThreads){
+        	try {
+				oThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
         	
-
-        	for(Rect oEye: eyes){
-        		if(leftEyeRect.x + leftEyeRect.width < oEye.x){
-        			rightEyeRect = oEye;
-        		}        		
-        	}
-        	
-        }
-        else{
-        	leftEyeRect = eyes.size() > 0 ? eyes.get(0) : null;
-        }
-
-        
-        if (leftEyeRect != null && rightEyeRect != null){
-        	if(leftEyeRect.x > rightEyeRect.x) {
-        		// Swap.
-        		Rect r = leftEyeRect;
-        		leftEyeRect = rightEyeRect;
-        		rightEyeRect = r;
-        	}
         }
         
-        leftEyeRect = leftEye.update(leftEyeRect, delta);
-        rightEyeRect = rightEye.update(rightEyeRect, delta);
         
-        if (leftEyeRect == null || rightEyeRect == null) {
-          return;
+        Rect mouthRect = rMouthThread.getMouthRect();
+        if(mouthRect == null){
+        	return;
+        
         }
-        
-        int fix = (int)(leftEyeRect.width / 5.0);
-        if(leftEyeRect.x > fix){
-	        leftEyeRect.x -= fix;
-	        leftEyeRect.width += fix;
-	        rightEyeRect.width += fix;
-	        //drawRect(mRgba, leftEyeRect, EYE_COLOR);
-	        //drawRect(mRgba, rightEyeRect, EYE_COLOR);
-        }
-        
-        // Detect mouth.
-        ///*
-        /*Rect mouthROI = new Rect(
-            faceRect.x, (int)(faceRect.y + (faceRect.height / 1.55)),
-            faceRect.width, (int)(faceRect.height / 3.0));*/
         
 
-        Rect mouthROI = new Rect(
-            faceRect.x, (int)(faceRect.y + (faceRect.height / 2)),
-            faceRect.width, (int)(faceRect.height / 2));
-        
-        //Rect mouthROI = faceRect;
-        
-        //drawRect(mRgba, mouthROI, FACE_COLOR);
-        
-        List<Rect> mouths = mouthDetector.detect(mGray, mouthROI);
-        
-        Rect mouthRect = mouth.update(
-            mouths.size() > 0 ? mouths.get(0) : null, delta);
-        if (mouthRect == null) {
-          return;
+        Rect leftEyeRect = rLeftEyeThread.getEyeRect();
+        Rect rightEyeRect = rRightEyeThread.getEyeRect();
+        if(leftEyeRect == null || rightEyeRect == null){
+        	return;
         }
-        /*mouthRect.x += (faceRect.x + faceRect.width / 2) -
-            (mouthRect.x + mouthRect.width / 2);*/
-        /*fix = (int)(mouthRect.width / 12.0);
-        mouthRect.x -= fix;
-        mouthRect.width += fix * 2;*/
-        //drawRect(mRgba, mouthRect, MOUTH_COLOR);
-        //*/
         
-        if (Options.activeKaomoji < 0) {
-          return;
-        }
-
-        // Replace features with Kaomoji if selected.
-        Rect sample;
-        sample = new Rect(
-            leftEyeRect.x + leftEyeRect.width,
-            leftEyeRect.y + 15,
-            rightEyeRect.x - leftEyeRect.x - leftEyeRect.width,
-            leftEyeRect.height - 30);
-        double[] skinColor = getSkinColor(mRgba, sample);
-        
-        if (skinColor[0] < 50) {
-          Log.e(TAG, "Failed to get skin color!");
-          return;
-        }
-        setToSkinColor(mRgba, leftEyeRect, skinColor, skinColor, 30, 75);
-        setToSkinColor(mRgba, rightEyeRect, skinColor, skinColor, 30, 75);
-        
-        sample = mouthRect.clone();
-        sample.y += mouthRect.height;
-        sample.height /= 4;
-        skinColor = getSkinColor(mRgba, sample);
-
-        sample.y = mouthRect.y - mouthRect.height / 4;
-        double[] skinColor2 = getSkinColor(mRgba, sample);
-        for (int i = 0; i < 3; i++) {
-          skinColor[i] = (skinColor[i] + skinColor2[i]) / 2;
-        }
-        setToSkinColor(mRgba, mouthRect, skinColor, skinColor, 20, 60);
+        //setSkinColor(mRgba, mouthRect, leftEyeRect, rightEyeRect);
 
         Kaomoji selected = kaomojiList.get(Options.activeKaomoji);
         selected.apply(mRgba, leftEyeRect, rightEyeRect, mouthRect);
       }
-    }
+   }
   }
+
+private void setSkinColor(Mat mRgba, Rect mouthRect, Rect leftEyeRect,
+		Rect rightEyeRect) {
+	// Replace features with Kaomoji if selected.
+	Rect sample;
+	sample = new Rect(
+	    leftEyeRect.x + leftEyeRect.width,
+	    leftEyeRect.y + 15,
+	    rightEyeRect.x - leftEyeRect.x - leftEyeRect.width,
+	    leftEyeRect.height - 30);
+	double[] skinColor = getSkinColor(mRgba, sample);
+	
+	if (skinColor[0] < 50) {
+	  Log.e(TAG, "Failed to get skin color!");
+	  return;
+	}
+	setToSkinColor(mRgba, leftEyeRect, skinColor, skinColor, 30, 75);
+	setToSkinColor(mRgba, rightEyeRect, skinColor, skinColor, 30, 75);
+	
+	sample = mouthRect.clone();
+	sample.y += mouthRect.height;
+	sample.height /= 4;
+	skinColor = getSkinColor(mRgba, sample);
+
+	sample.y = mouthRect.y - mouthRect.height / 4;
+	double[] skinColor2 = getSkinColor(mRgba, sample);
+	for (int i = 0; i < 3; i++) {
+	  skinColor[i] = (skinColor[i] + skinColor2[i]) / 2;
+	}
+	setToSkinColor(mRgba, mouthRect, skinColor, skinColor, 20, 60);
+}
+
+private Rect detectEye(Mat mGray, Rect faceRect, Point delta, Rect eyeROI, TrackedFeature oTrackedFeature) {
+	 // Detect eyes.
+    /*Rect eyeROI = new Rect(
+        faceRect.x, (int)(faceRect.y + (faceRect.height / 5.5)),
+        faceRect.width, (int)(faceRect.height / 3.0));*/
+
+    
+    /*Rect eyeROI = new Rect(
+    faceRect.x, faceRect.y,
+    faceRect.width, (int)(faceRect.height / 2));*/  
+
+    
+
+    //Rect eyeROI = faceRect;
+    List<Rect> eyes = eyeDetector.detect(mGray, eyeROI);
+    
+
+	Rect eyeRect = eyes.size() > 0 ? eyes.get(0) : null;
+    
+	eyeRect = oTrackedFeature.update(eyeRect, delta);
+    
+    if (eyeRect == null) {
+      return null;
+    }
+    
+    /*int fix = (int)(eyeRect.width / 5.0);
+    if(eyeRect.x > fix){
+    	eyeRect.x -= fix;
+    	eyeRect.width += fix;
+    }*/
+    
+    return eyeRect;
+	
+}
+
+private Rect detectMouth(Mat mGray, Rect faceRect, Point delta) {
+	// Detect mouth.
+	///*
+	/*Rect mouthROI = new Rect(
+	    faceRect.x, (int)(faceRect.y + (faceRect.height / 1.55)),
+	    faceRect.width, (int)(faceRect.height / 3.0));*/
+	
+
+	Rect mouthROI = new Rect(
+	    faceRect.x, (int)(faceRect.y + (faceRect.height / 2)),
+	    faceRect.width, (int)(faceRect.height / 2));
+	
+	//Rect mouthROI = faceRect;
+	
+	//drawRect(mRgba, mouthROI, FACE_COLOR);
+	
+	List<Rect> mouths = mouthDetector.detect(mGray, mouthROI);
+	
+	Rect mouthRect = mouth.update(
+	    mouths.size() > 0 ? mouths.get(0) : null, delta);
+	if (mouthRect == null) {
+	  return null;
+	}
+	/*mouthRect.x += (faceRect.x + faceRect.width / 2) -
+	    (mouthRect.x + mouthRect.width / 2);*/
+	/*fix = (int)(mouthRect.width / 12.0);
+	mouthRect.x -= fix;
+	mouthRect.width += fix * 2;*/
+	//drawRect(mRgba, mouthRect, MOUTH_COLOR);
+	//*/
+	return mouthRect;
+}
   
   private double[] getSkinColor(Mat mRgba, Rect sample) {
     double[] skinValues = {0, 0, 0, 255};

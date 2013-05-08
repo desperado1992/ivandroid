@@ -109,7 +109,8 @@ public class FeatureDetector {
   }
   
   public static FeatureDetector getEyeDetector(Context context) {
-    return new FeatureDetector(context, R.raw.haarcascade_eye_tree_eyeglasses)
+    //return new FeatureDetector(context, R.raw.haarcascade_eye_tree_eyeglasses)
+    return new FeatureDetector(context, R.raw.haarcascade_eye)
         .setMinSize(25, 15)
         .setMaxSize(0.5, 1)
         .setScale(1.15)

@@ -2,6 +2,7 @@ package ee368.kaomoji.threads;
 
 import java.util.List;
 
+
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;

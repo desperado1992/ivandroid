@@ -117,8 +117,8 @@ public class FaceTracker {
 					(int) (faceRect.width * 2 / 3),
 					(int) (faceRect.height * 2 / 5));
 
-			EyeRunnableThread rLeftEyeThread = new EyeRunnableThread(mRgba, mGray,
-					faceRect, delta, eyeDetector, leftEye, leftEyeROI, leftEyeDetected, leftEyeRect, csLeftEye);
+			EyeRunnableThread rLeftEyeThread = new EyeRunnableThread( mGray,
+					faceRect, delta, eyeDetector, leftEye, leftEyeROI);
 			Thread oLeftEyeThread = new Thread(rLeftEyeThread);
 			lThreads.add(oLeftEyeThread);
 
@@ -128,8 +128,8 @@ public class FaceTracker {
 					(int) (faceRect.width * 2 / 3),
 					(int) (faceRect.height * 2 / 5));
 
-			EyeRunnableThread rRightEyeThread = new EyeRunnableThread(mRgba, mGray,
-					faceRect, delta, eyeDetector, rightEye, rightEyeROI, rightEyeDetected, rightEyeRect, csRightEye);
+			EyeRunnableThread rRightEyeThread = new EyeRunnableThread(mGray,
+					faceRect, delta, eyeDetector, rightEye, rightEyeROI);
 			Thread oRightEyeThread = new Thread(rRightEyeThread);
 			lThreads.add(oRightEyeThread);
 

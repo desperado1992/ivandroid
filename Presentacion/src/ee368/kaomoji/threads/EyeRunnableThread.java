@@ -8,7 +8,8 @@ import org.opencv.core.Point;
 import org.opencv.core.Rect;
 
 import ee368.kaomoji.FeatureDetector;
-import ee368.kaomoji.TrackedFeature;
+import ee368.kaomoji.tracking.CamShifting;
+import ee368.kaomoji.tracking.TrackedFeature;
 
 public class EyeRunnableThread  implements  Runnable{
 	Mat mGray;
@@ -30,6 +31,7 @@ public class EyeRunnableThread  implements  Runnable{
 		this.eye = eye;
 		this.eyeROI = eyeROI;
 	}
+
 
 	private Rect eyeRect;	
 

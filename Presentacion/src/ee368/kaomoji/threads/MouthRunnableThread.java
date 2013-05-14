@@ -65,7 +65,7 @@ public class MouthRunnableThread  implements  Runnable{
 			// for (int i = 0; i < facearray1.length; i++)
 			// Core.rectangle(mRgba, facearray1[i].tl(), facearray1[i].br(),
 			// FACE_COLOR, 3);
-			Log.i("FdView", "Calling create tracked object");
+			Log.i("MouthRunnableThread", "Calling create tracked object");
 
 			if (mouthDetector != null) {
 				mouths = mouthDetector.detect(mGray, mouthROI);

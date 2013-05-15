@@ -66,6 +66,10 @@ public class MouthRunnableThread  implements  Runnable{
 		if(mouthRect == null){
 			Log.i("MouthRunnableThread", "detect");
 			mouths = mouthDetector.detect(mGray, mouthROI);
+			mouthRect = mouths.size() > 0 ? mouths.get(0) : null;
+			if(mouthRect != null){				
+				mouth.update(mouthRect, null);
+			}
 			Log.i("MouthRunnableThread", "Finish detect");
 		}
 		else{

@@ -76,7 +76,7 @@ public class FeatureDetector {
     int maxH = getScaledHeight(image, maxHeight);
     List<Rect> objects = new ArrayList<Rect>(); 
     mCascade.detectMultiScale(image, objects, scale, minNeighbors,
-        Objdetect.CASCADE_DO_CANNY_PRUNING,
+        Objdetect.CASCADE_DO_CANNY_PRUNING,	
         new Size(minW, minH), new Size(maxW, maxH));
     return objects;
   }

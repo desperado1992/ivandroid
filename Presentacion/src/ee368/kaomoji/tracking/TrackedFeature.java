@@ -72,4 +72,10 @@ public class TrackedFeature {
   private static Point computeDelta(Point newCenter, Point prevCenter) {
     return new Point(newCenter.x - prevCenter.x, newCenter.y - prevCenter.y);
   }
+
+  public Point getPrevRect() {
+	return prevCenter;
+}
+
+
 }

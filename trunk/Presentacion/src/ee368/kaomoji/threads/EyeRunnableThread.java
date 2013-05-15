@@ -56,12 +56,14 @@ public class EyeRunnableThread  implements  Runnable{
 		
 
 		eyeRect = eye.update(eyeRect, delta);
+
 		if(eyeRect == null){
 			Log.i("EyeRunnableThread", "detect");
 			eyes = eyeDetector.detect(mGray, eyeROI);
 			eyeRect = eyes.size() > 0 ? eyes.get(0) : null;
 			if(eyeRect != null){				
 				eye.update(eyeRect, null);
+				
 			}
 			Log.i("EyeRunnableThread", "Finish detect");
 		}
@@ -70,8 +72,8 @@ public class EyeRunnableThread  implements  Runnable{
 			Log.i("EyeRunnableThread", "eyeRect != null");
 		}
 	    
-	
-		eyeRect = eyes.size() > 0 ? eyes.get(0) : null;
+
+		eyeRect = eye.update(eyes.size() > 0 ? eyes.get(0) : eyeRect, null);
 
 		Log.i("EyeRunnableThread", "End run");
 		/*eyeRect = eye.update(eyeRect, delta);*/

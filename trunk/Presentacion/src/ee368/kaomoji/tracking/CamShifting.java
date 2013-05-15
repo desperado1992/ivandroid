@@ -95,7 +95,7 @@ public class CamShifting
 	public void update_hue_image(Mat mRgba,List<Rect> region,CamShifting cs)
 	{
 		
-		  int vmin =65, vmax = 256, smin = 55;
+		  int vmin =63, vmax = 256, smin = 53;
 		  bgr=new Mat(mRgba.size(),CvType.CV_8UC3);
 		  Imgproc.cvtColor(mRgba,bgr,Imgproc.COLOR_RGBA2BGR);
 		  //imran converting RGBA to BGR 

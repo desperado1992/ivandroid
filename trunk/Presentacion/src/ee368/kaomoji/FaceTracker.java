@@ -109,14 +109,22 @@ public class FaceTracker {
 		
 		if(faces.size() == 0){
 			face.update(null);
+			face.update(null);
+			mouth.update(null);
+			mouth.update(null);
+			leftEye.update(null);
+			leftEye.update(null);
+			rightEye.update(null);
+			rightEye.update(null);
 			Log.i("FaceTracker", "faces.size() == 0");
 		}
 
 		for (Rect faceRect : faces) {
 			Log.i("FaceTracker", "faces.size() > 0");
 			Point delta = face.getDelta();
-			
-			
+			delta = null;
+
+			Log.i("FaceTracker", "delta = " + ((delta==null)?"null": delta.toString()));
 
 			MouthRunnableThread rMouthThread = new MouthRunnableThread(mRgba, mGray,
 					faceRect, delta, mouthDetector, mouth, mouthDetected, mouthRect, csMouth);
@@ -229,6 +237,7 @@ public class FaceTracker {
 	}
 
 	private void getFacesList(Mat mRgba, Mat mGray) {
+		
 		if (!faceDetected) {
 			// for (int i = 0; i < facearray1.length; i++)
 			// Core.rectangle(mRgba, facearray1[i].tl(), facearray1[i].br(),
@@ -250,13 +259,16 @@ public class FaceTracker {
 			// track the face in the new frame
 
 			RotatedRect face_box = cs.camshift_track_face(mRgba, faces, cs);
-			//Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
-			//Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
+			Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
+			Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
 
 			if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
 					&& face_box.size.width > 10 && face_box.size.height > 10) {
 				Log.i("FaceTracker", "Calling tracke face");
 				faces = Arrays.asList(face_box.boundingRect());
+			}
+			else{
+				faces = new ArrayList<Rect>();
 			}
 
 			faceDetected = false;

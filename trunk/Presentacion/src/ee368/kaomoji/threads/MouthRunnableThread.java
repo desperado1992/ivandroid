@@ -62,6 +62,8 @@ public class MouthRunnableThread  implements  Runnable{
 		
 		List<Rect> mouths = new ArrayList<Rect>();
 		
+		Log.i("MouthRunnableThread", "delta = " + ((delta==null)?"null": delta.toString()));
+		Log.i("MouthRunnableThread", "1 mouth.getPrevRect() = " + ((mouth.getPrevRect()==null)?"null": mouth.getPrevRect().toString()));
 		mouthRect = mouth.update(null, delta);
 		if(mouthRect == null){
 			Log.i("MouthRunnableThread", "detect");
@@ -69,16 +71,18 @@ public class MouthRunnableThread  implements  Runnable{
 			mouthRect = mouths.size() > 0 ? mouths.get(0) : null;
 			if(mouthRect != null){				
 				mouth.update(mouthRect, null);
+				Log.i("MouthRunnableThread", "2 mouth.getPrevRect() = " + ((mouth.getPrevRect()==null)?"null": mouth.getPrevRect().toString()));
+				
 			}
 			Log.i("MouthRunnableThread", "Finish detect");
 		}
 		else{
 
-			Log.i("MouthRunnableThread", "eyeRect != null");
+			Log.i("MouthRunnableThread", "mouthRect != null");
 		}
 		
-
-		mouthRect = mouths.size() > 0 ? mouths.get(0) : null;
+		mouthRect = mouth.update(mouths.size() > 0 ? mouths.get(0) : mouthRect, null);
+		
 		
 
 		Log.i("MouthRunnableThread", "End run");

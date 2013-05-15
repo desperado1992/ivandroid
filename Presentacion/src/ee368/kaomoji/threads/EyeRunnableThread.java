@@ -1,11 +1,14 @@
 package ee368.kaomoji.threads;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+
+import android.util.Log;
 
 import ee368.kaomoji.FeatureDetector;
 import ee368.kaomoji.tracking.CamShifting;
@@ -49,12 +52,25 @@ public class EyeRunnableThread  implements  Runnable{
 	    
 	
 	    //Rect eyeROI = faceRect;
-	    List<Rect> eyes = eyeDetector.detect(mGray, eyeROI);
+		List<Rect> eyes = new ArrayList<Rect>();
+		
+
+		eyeRect = eye.update(eyeRect, delta);
+		if(eyeRect == null){
+			Log.i("EyeRunnableThread", "detect");
+			eyes = eyeDetector.detect(mGray, eyeROI);
+			Log.i("EyeRunnableThread", "Finish detect");
+		}
+		else{
+
+			Log.i("EyeRunnableThread", "eyeRect != null");
+		}
 	    
 	
 		eyeRect = eyes.size() > 0 ? eyes.get(0) : null;
-	    
-		eyeRect = eye.update(eyeRect, delta);
+
+		Log.i("EyeRunnableThread", "End run");
+		/*eyeRect = eye.update(eyeRect, delta);*/
 	    
 	    
 	    /*int fix = (int)(eyeRect.width / 5.0);

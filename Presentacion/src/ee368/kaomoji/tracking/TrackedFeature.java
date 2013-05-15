@@ -39,13 +39,13 @@ public class TrackedFeature {
       if (shouldCorrect) {
     	  if(rect != null){
     		newRect.x = rect.x + (int)refDelta.x;
-	        newRect.x = rect.y + (int)refDelta.y;
+	        newRect.y = rect.y + (int)refDelta.y;
 	        newRect.width = rect.width;
 	        newRect.height = rect.height;
     	  }
     	  else{
     		newRect.x = prevRect.x + (int)refDelta.x;
-  	        newRect.x = prevRect.y + (int)refDelta.y;
+  	        newRect.y = prevRect.y + (int)refDelta.y;
   	        newRect.width = prevRect.width;
   	        newRect.height = prevRect.height;
     		  

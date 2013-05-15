@@ -102,9 +102,16 @@ public class FaceTracker {
 
 		getFacesList(mRgba, mGray);
 
-		for (Rect faceRect : faces) {
-			Point delta = face.getDelta();
+		
+		if(faces.size() == 0){
+			face.update(null);
+			Log.i("FaceTracker", "faces.size() == 0");
+		}
 
+		for (Rect faceRect : faces) {
+			Log.i("FaceTracker", "faces.size() > 0");
+			Point delta = face.getDelta();
+			
 			List<Thread> lThreads = new ArrayList<Thread>();
 
 			MouthRunnableThread rMouthThread = new MouthRunnableThread(mRgba, mGray,
@@ -136,26 +143,32 @@ public class FaceTracker {
 			for (Thread oThread : lThreads) {
 				oThread.start();
 			}
+			Log.i("FaceTracker", "started");
 
 			for (Thread oThread : lThreads) {
 				try {
-					oThread.join();
+					oThread.join(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
 			}
+			
+
+			Log.i("FaceTracker", "joined");
 
 			mouthRect = rMouthThread.getMouthRect();
 			if (mouthRect == null) {
 
+				Log.i("FaceTracker", "NO mouth Detected");
 				mouthDetected = false;
 				return;
 
 			}
 			else{
 
+				Log.i("FaceTracker", "mouth Detected");
 				mouthDetected = true;
 			}
 
@@ -164,13 +177,18 @@ public class FaceTracker {
 			if (leftEyeRect == null || rightEyeRect == null) {
 				leftEyeDetected = false;
 				rightEyeDetected = false;
+
+				Log.i("FaceTracker", "NO Eyes Detected");
 				return;
 			}
 			else{
 				if(leftEyeRect != null){
+
+					Log.i("FaceTracker", "leftEye Detected");
 					leftEyeDetected = true;			
 				}
 				if(rightEyeRect != null){
+					Log.i("FaceTracker", "rightEye Detected");
 					rightEyeDetected = true;
 				}
 			}
@@ -180,7 +198,11 @@ public class FaceTracker {
 			Kaomoji selected = kaomojiList.get(Options.activeKaomoji);
 			selected.apply(mRgba, leftEyeRect, rightEyeRect, mouthRect);
 
+
+			face.update(faceRect);
 			faceDetected = true;
+
+			Log.i("FaceTracker", "Face Detected");
 		}
 
 	}
@@ -190,7 +212,6 @@ public class FaceTracker {
 			// for (int i = 0; i < facearray1.length; i++)
 			// Core.rectangle(mRgba, facearray1[i].tl(), facearray1[i].br(),
 			// FACE_COLOR, 3);
-			Log.i("FdView", "Calling create tracked object");
 
 			if (faceDetector != null) {
 				faces = faceDetector.detect(mGray);
@@ -199,16 +220,21 @@ public class FaceTracker {
 						Core.rectangle(mRgba, faces.get(i).tl(), faces.get(i)
 								.br(), FACE_COLOR, 3);
 
+					Log.i("FaceTracker", "Calling create tracked object");
 					cs.create_tracked_object(mRgba, faces, cs);
 				}
 			}
 
 		} else {
 			// track the face in the new frame
-			RotatedRect face_box = cs.camshift_track_face(mRgba, faces, cs);
-			Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
 
-			if (face_box != null) {
+			Log.i("FaceTracker", "Calling tracke face");
+			RotatedRect face_box = cs.camshift_track_face(mRgba, faces, cs);
+			//Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
+			Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
+
+			if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
+					&& face_box.size.width > 10 && face_box.size.height > 10) {
 				faces = Arrays.asList(face_box.boundingRect());
 			}
 

@@ -10,6 +10,9 @@ package ee368.kaomoji;
 public final class R {
     public static final class attr {
     }
+    public static final class bool {
+        public static final int multiThreading=0x7f050000;
+    }
     public static final class drawable {
         public static final int icon=0x7f020000;
     }

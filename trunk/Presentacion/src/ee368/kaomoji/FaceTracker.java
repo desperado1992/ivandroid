@@ -59,9 +59,13 @@ public class FaceTracker {
 	Rect leftEyeRect;
 	Rect rightEyeRect;
 
+	private Context context;
+
 	public static ArrayList<Kaomoji> kaomojiList = new ArrayList<Kaomoji>();
 
 	public FaceTracker(Context context) {
+		
+		this.context = context;
 		faceDetector = FeatureDetector.getFaceDetector(context);
 		eyeDetector = FeatureDetector.getEyeDetector(context);
 		mouthDetector = FeatureDetector.getMouthDetector(context);
@@ -112,12 +116,12 @@ public class FaceTracker {
 			Log.i("FaceTracker", "faces.size() > 0");
 			Point delta = face.getDelta();
 			
-			List<Thread> lThreads = new ArrayList<Thread>();
+			
 
 			MouthRunnableThread rMouthThread = new MouthRunnableThread(mRgba, mGray,
 					faceRect, delta, mouthDetector, mouth, mouthDetected, mouthRect, csMouth);
 			Thread oMouthThread = new Thread(rMouthThread);
-			lThreads.add(oMouthThread);
+			
 
 			Rect leftEyeROI = new Rect(faceRect.x, faceRect.y
 					+ (int) (faceRect.height / 5),
@@ -127,7 +131,6 @@ public class FaceTracker {
 			EyeRunnableThread rLeftEyeThread = new EyeRunnableThread( mGray,
 					faceRect, delta, eyeDetector, leftEye, leftEyeROI);
 			Thread oLeftEyeThread = new Thread(rLeftEyeThread);
-			lThreads.add(oLeftEyeThread);
 
 			Rect rightEyeROI = new Rect(
 					faceRect.x + (int) (faceRect.width / 3), faceRect.y
@@ -138,25 +141,42 @@ public class FaceTracker {
 			EyeRunnableThread rRightEyeThread = new EyeRunnableThread(mGray,
 					faceRect, delta, eyeDetector, rightEye, rightEyeROI);
 			Thread oRightEyeThread = new Thread(rRightEyeThread);
-			lThreads.add(oRightEyeThread);
 
-			for (Thread oThread : lThreads) {
-				oThread.start();
-			}
-			Log.i("FaceTracker", "started");
-
-			for (Thread oThread : lThreads) {
-				try {
-					oThread.join(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			boolean bmultiThreading = context.getResources().getBoolean(R.bool.multiThreading);
+			if(bmultiThreading){
+				List<Thread> lThreads = new ArrayList<Thread>();
+				lThreads.add(oMouthThread);
+				lThreads.add(oLeftEyeThread);
+				lThreads.add(oRightEyeThread);
+			
+				//Multithreading
+				for (Thread oThread : lThreads) {
+					oThread.start();
+					//oThread.join();
 				}
-
+				Log.i("FaceTracker", "started");
+	
+				for (Thread oThread : lThreads) {
+					try {
+						oThread.join();
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+	
+						Log.e("FaceTracker", e.getMessage());
+					}
+	
+				}
+				
+				
+				Log.i("FaceTracker", "joined");
+			}
+			else{			
+				rMouthThread.run();
+				rLeftEyeThread.run();
+				rRightEyeThread.run();
 			}
 			
 
-			Log.i("FaceTracker", "joined");
 
 			mouthRect = rMouthThread.getMouthRect();
 			if (mouthRect == null) {
@@ -171,6 +191,7 @@ public class FaceTracker {
 				Log.i("FaceTracker", "mouth Detected");
 				mouthDetected = true;
 			}
+
 
 			leftEyeRect = rLeftEyeThread.getEyeRect();
 			rightEyeRect = rRightEyeThread.getEyeRect();
@@ -217,8 +238,8 @@ public class FaceTracker {
 				faces = faceDetector.detect(mGray);
 				if (faces.size() > 0) {
 					for (int i = 0; i < faces.size(); i++)
-						Core.rectangle(mRgba, faces.get(i).tl(), faces.get(i)
-								.br(), FACE_COLOR, 3);
+						/*Core.rectangle(mRgba, faces.get(i).tl(), faces.get(i)
+								.br(), FACE_COLOR, 3);*/
 
 					Log.i("FaceTracker", "Calling create tracked object");
 					cs.create_tracked_object(mRgba, faces, cs);
@@ -228,13 +249,13 @@ public class FaceTracker {
 		} else {
 			// track the face in the new frame
 
-			Log.i("FaceTracker", "Calling tracke face");
 			RotatedRect face_box = cs.camshift_track_face(mRgba, faces, cs);
 			//Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
-			Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
+			//Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
 
 			if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
 					&& face_box.size.width > 10 && face_box.size.height > 10) {
+				Log.i("FaceTracker", "Calling tracke face");
 				faces = Arrays.asList(face_box.boundingRect());
 			}
 

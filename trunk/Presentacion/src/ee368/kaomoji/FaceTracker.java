@@ -259,8 +259,8 @@ public class FaceTracker {
 			// track the face in the new frame
 
 			RotatedRect face_box = cs.camshift_track_face(mRgba, faces, cs);
-			Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
-			Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
+			//Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
+			//Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
 
 			if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
 					&& face_box.size.width > 10 && face_box.size.height > 10) {

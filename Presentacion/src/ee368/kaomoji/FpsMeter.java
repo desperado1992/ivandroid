@@ -20,7 +20,7 @@ public class FpsMeter {
     Paint                       paint;
 
     public void init() {
-        step = 20;
+        step = 5;
         framesCouner = 0;
         freq = Core.getTickFrequency();
         prevFrameTime = Core.getTickCount();

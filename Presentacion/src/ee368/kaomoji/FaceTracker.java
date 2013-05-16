@@ -14,6 +14,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.DMatch;
 import org.opencv.imgproc.Imgproc;
 
 import ee368.kaomoji.threads.EyeRunnableThread;
@@ -44,10 +45,10 @@ public class FaceTracker {
 	private Mat hist;
 	private Mat mask;
 
-	public boolean faceDetected;
-	public boolean mouthDetected;
-	public boolean leftEyeDetected;
-	public boolean rightEyeDetected;
+	public boolean bFaceDetected;
+	public boolean bMouthDetected;
+	public boolean bLeftEyeDetected;
+	public boolean bRightEyeDetected;
 
 	CamShifting cs;
 	CamShifting csMouth;
@@ -84,10 +85,10 @@ public class FaceTracker {
 		hist = new Mat();
 		mask = new Mat();
 
-		faceDetected = false;
-		mouthDetected = false;
-		leftEyeDetected = false;
-		rightEyeDetected = false;
+		bFaceDetected = false;
+		bMouthDetected = false;
+		bLeftEyeDetected = false;
+		bRightEyeDetected = false;
 
 		cs = new CamShifting();
 		csMouth = new CamShifting();
@@ -104,7 +105,8 @@ public class FaceTracker {
 			return;
 		}
 
-		getFacesList(mRgba, mGray);
+		faces = faceDetector.detect(mGray);
+		//getFacesList(mRgba, mGray);
 
 		
 		if(faces.size() == 0){
@@ -116,6 +118,9 @@ public class FaceTracker {
 			leftEye.update(null);
 			rightEye.update(null);
 			rightEye.update(null);
+			bMouthDetected = false;				
+			bLeftEyeDetected = false;
+			bRightEyeDetected = false;
 			Log.i("FaceTracker", "faces.size() == 0");
 		}
 
@@ -124,30 +129,30 @@ public class FaceTracker {
 			Point delta = face.getDelta();
 			delta = null;
 
-			Log.i("FaceTracker", "delta = " + ((delta==null)?"null": delta.toString()));
-
+			
 			MouthRunnableThread rMouthThread = new MouthRunnableThread(mRgba, mGray,
-					faceRect, delta, mouthDetector, mouth, mouthDetected, mouthRect, csMouth);
+					faceRect, delta, mouthDetector, mouth, bMouthDetected, mouthRect, csMouth);
 			Thread oMouthThread = new Thread(rMouthThread);
+			
 			
 
 			Rect leftEyeROI = new Rect(faceRect.x, faceRect.y
-					+ (int) (faceRect.height / 5),
-					(int) (faceRect.width * 2 / 3),
-					(int) (faceRect.height * 2 / 5));
+					+ (int) (faceRect.height / 5.5),
+					(int) (faceRect.width * 2.0 / 3.0),
+					(int) (faceRect.height /3.0));
 
-			EyeRunnableThread rLeftEyeThread = new EyeRunnableThread( mGray,
-					faceRect, delta, eyeDetector, leftEye, leftEyeROI);
+			EyeRunnableThread rLeftEyeThread = new EyeRunnableThread( mRgba, mGray,
+					faceRect, delta, eyeDetector, leftEye, leftEyeROI, bLeftEyeDetected, leftEyeRect, csLeftEye);
 			Thread oLeftEyeThread = new Thread(rLeftEyeThread);
 
 			Rect rightEyeROI = new Rect(
-					faceRect.x + (int) (faceRect.width / 3), faceRect.y
-							+ (int) (faceRect.height / 5),
-					(int) (faceRect.width * 2 / 3),
-					(int) (faceRect.height * 2 / 5));
+					faceRect.x + (int) (faceRect.width / 3.0), faceRect.y
+							+ (int) (faceRect.height / 5.5),
+					(int) (faceRect.width * 2.0 / 3),
+					(int) (faceRect.height  / 3.0));
 
-			EyeRunnableThread rRightEyeThread = new EyeRunnableThread(mGray,
-					faceRect, delta, eyeDetector, rightEye, rightEyeROI);
+			EyeRunnableThread rRightEyeThread = new EyeRunnableThread(mRgba, mGray,
+					faceRect, delta, eyeDetector, rightEye, rightEyeROI, bRightEyeDetected, rightEyeRect, csRightEye);
 			Thread oRightEyeThread = new Thread(rRightEyeThread);
 
 			boolean bmultiThreading = context.getResources().getBoolean(R.bool.multiThreading);
@@ -180,8 +185,11 @@ public class FaceTracker {
 			}
 			else{			
 				rMouthThread.run();
+				bMouthDetected = rMouthThread.getDetected();
 				rLeftEyeThread.run();
+				bLeftEyeDetected = rLeftEyeThread.getDetected();
 				rRightEyeThread.run();
+				bRightEyeDetected = rRightEyeThread.getDetected();
 			}
 			
 
@@ -190,22 +198,22 @@ public class FaceTracker {
 			if (mouthRect == null) {
 
 				Log.i("FaceTracker", "NO mouth Detected");
-				mouthDetected = false;
+				bMouthDetected = false;
 				return;
 
 			}
 			else{
 
 				Log.i("FaceTracker", "mouth Detected");
-				mouthDetected = true;
+				bMouthDetected = true;
 			}
 
 
 			leftEyeRect = rLeftEyeThread.getEyeRect();
 			rightEyeRect = rRightEyeThread.getEyeRect();
 			if (leftEyeRect == null || rightEyeRect == null) {
-				leftEyeDetected = false;
-				rightEyeDetected = false;
+				bLeftEyeDetected = false;
+				bRightEyeDetected = false;
 
 				Log.i("FaceTracker", "NO Eyes Detected");
 				return;
@@ -214,11 +222,11 @@ public class FaceTracker {
 				if(leftEyeRect != null){
 
 					Log.i("FaceTracker", "leftEye Detected");
-					leftEyeDetected = true;			
+					bLeftEyeDetected = true;			
 				}
 				if(rightEyeRect != null){
 					Log.i("FaceTracker", "rightEye Detected");
-					rightEyeDetected = true;
+					bRightEyeDetected = true;
 				}
 			}
 
@@ -229,8 +237,10 @@ public class FaceTracker {
 
 
 			face.update(faceRect);
-			faceDetected = true;
+			bFaceDetected = true;
 
+			//drawRect(mRgba, leftEyeROI, FACE_COLOR);
+			//drawRect(mRgba, rightEyeROI, FACE_COLOR);
 			Log.i("FaceTracker", "Face Detected");
 		}
 
@@ -238,7 +248,7 @@ public class FaceTracker {
 
 	private void getFacesList(Mat mRgba, Mat mGray) {
 		
-		if (!faceDetected) {
+		if (!bFaceDetected) {
 			// for (int i = 0; i < facearray1.length; i++)
 			// Core.rectangle(mRgba, facearray1[i].tl(), facearray1[i].br(),
 			// FACE_COLOR, 3);
@@ -246,19 +256,21 @@ public class FaceTracker {
 			if (faceDetector != null) {
 				faces = faceDetector.detect(mGray);
 				if (faces.size() > 0) {
-					for (int i = 0; i < faces.size(); i++)
+					//for (int i = 0; i < faces.size(); i++)
 						/*Core.rectangle(mRgba, faces.get(i).tl(), faces.get(i)
 								.br(), FACE_COLOR, 3);*/
 
 					Log.i("FaceTracker", "Calling create tracked object");
-					cs.create_tracked_object(mRgba, faces, cs);
+					List<Rect> lROI = Arrays.asList(new Rect(0,0, (int)mRgba.size().width, (int)mRgba.size().height));
+					cs.create_tracked_object(mRgba, faces, lROI, cs);
 				}
 			}
 
 		} else {
 			// track the face in the new frame
 
-			RotatedRect face_box = cs.camshift_track_face(mRgba, faces, cs);
+			List<Rect> lROI = Arrays.asList(new Rect(0,0, (int)mRgba.size().width, (int)mRgba.size().height));
+			RotatedRect face_box = cs.camshift_track(mRgba, faces, lROI, cs);
 			//Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
 			//Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
 
@@ -271,7 +283,7 @@ public class FaceTracker {
 				faces = new ArrayList<Rect>();
 			}
 
-			faceDetected = false;
+			bFaceDetected = false;
 
 		}
 

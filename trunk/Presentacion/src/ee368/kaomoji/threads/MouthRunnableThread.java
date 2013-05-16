@@ -57,31 +57,20 @@ public class MouthRunnableThread  implements  Runnable{
 		    faceRect.width, (int)(faceRect.height / 3.0));*/
 
 		Rect mouthROI = new Rect(
-		    faceRect.x, (int)(faceRect.y + (faceRect.height / 2)),
-		    faceRect.width, (int)(faceRect.height / 2));
-		
-		List<Rect> mouths = new ArrayList<Rect>();
-		
-		Log.i("MouthRunnableThread", "delta = " + ((delta==null)?"null": delta.toString()));
-		Log.i("MouthRunnableThread", "1 mouth.getPrevRect() = " + ((mouth.getPrevRect()==null)?"null": mouth.getPrevRect().toString()));
-		mouthRect = mouth.update(null, delta);
-		if(mouthRect == null){
-			Log.i("MouthRunnableThread", "detect");
-			mouths = mouthDetector.detect(mGray, mouthROI);
-			mouthRect = mouths.size() > 0 ? mouths.get(0) : null;
-			if(mouthRect != null){				
-				mouth.update(mouthRect, null);
-				Log.i("MouthRunnableThread", "2 mouth.getPrevRect() = " + ((mouth.getPrevRect()==null)?"null": mouth.getPrevRect().toString()));
-				
-			}
-			Log.i("MouthRunnableThread", "Finish detect");
-		}
-		else{
+				(int)(faceRect.x + faceRect.width/5.0), (int)(faceRect.y + (faceRect.height * 2.0 / 3.0)),
+				(int)(faceRect.width *3.0/5.0), (int)(faceRect.height / 3.0));
 
-			Log.i("MouthRunnableThread", "mouthRect != null");
-		}
-		
-		mouthRect = mouth.update(mouths.size() > 0 ? mouths.get(0) : mouthRect, null);
+		List<Rect> mouths = new ArrayList<Rect>();
+
+
+		Log.i("MouthRunnableThread", "detect");
+		mouths = mouthDetector.detect(mGray, mouthROI);
+		//mouths = getMouthList(mRgba, mGray, mouthROI);
+		mouthRect = mouths.size() > 0 ? mouths.get(0) : null;
+		Log.i("MouthRunnableThread", "Finish detect");
+
+
+		mouthRect = mouths.size() > 0 ? mouths.get(0) : mouthRect;
 		
 		
 
@@ -98,9 +87,55 @@ public class MouthRunnableThread  implements  Runnable{
 		//*/
 		
 	}
+	
+private List<Rect> getMouthList(Mat mRgba, Mat mGray, Rect mouthROI) {
+	List<Rect> mouths =new ArrayList<Rect>();
+		if (!bDetected) {
+			// for (int i = 0; i < facearray1.length; i++)
+
+			if (mouthDetector != null) {
+				mouths = mouthDetector.detect(mGray, mouthROI);
+				if (mouths.size() > 0) {
+
+					 Core.rectangle(mRgba, mouths.get(0).tl(), mouths.get(0).br(),
+							 MOUTH_COLOR, 3);
+					Log.i("MouthRunnableThread", "Calling create tracked object");
+					cs.create_tracked_object(mRgba, mouths, Arrays.asList(mouthROI), cs);
+				}
+			}
+
+		} else {
+			// track the face in the new frame
+			RotatedRect face_box = cs.camshift_track(mRgba, Arrays.asList(mouthRect), Arrays.asList(mouthROI), cs);
+			//Core.ellipse(mRgba, face_box, MOUTH_COLOR, 6);
+			
+			if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
+					&& face_box.size.width > 1 && face_box.size.height > 1) {
+				Log.i("MouthRunnableThread", "Calling tracke face");
+				mouths = Arrays.asList(face_box.boundingRect());
+				mouths.get(0).x += mouthROI.x;
+				mouths.get(0).y += mouthROI.y;
+				Core.rectangle(mRgba, mouths.get(0).tl(), mouths.get(0).br(), MOUTH_COLOR, 3);
+
+			}
+			else{
+				mouths = new ArrayList<Rect>();
+			}
+
+			bDetected = false;
+
+		}
+		
+		return mouths;
+
+	}
 
 	public Rect getMouthRect() {
 		return mouthRect;
+	}
+
+	public boolean getDetected() {
+		return bDetected;
 	}
 	
 

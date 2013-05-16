@@ -98,8 +98,8 @@ public class EyeRunnableThread  implements  Runnable{
 					eyes = eyeDetector.detect(mGray, mouthROI);
 					if (eyes.size() > 0) {
 
-						 Core.rectangle(mRgba, eyes.get(0).tl(), eyes.get(0).br(),
-								 EYE_COLOR, 3);
+						 /*Core.rectangle(mRgba, eyes.get(0).tl(), eyes.get(0).br(),
+								 EYE_COLOR, 3);*/
 						Log.i("EyeRunnableThread", "Calling create tracked object");
 						cs.create_tracked_object(mRgba, eyes, Arrays.asList(mouthROI), cs);
 					}

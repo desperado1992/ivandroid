@@ -78,7 +78,7 @@ public class CamShifting
 		  //List<Float> ranges = Arrays.asList(0f, 256f);
 		  List<Float> ranges = Arrays.asList(0f, 256f, 0f, 256f);
 		  //List<Integer> histSize = Arrays.asList(25);
-		  List<Integer> histSize = Arrays.asList(90, 130);
+		  List<Integer> histSize = Arrays.asList(90,130);
 		  //List<Mat> histList = Arrays.asList( new Mat[] {new Mat(), new Mat(), new Mat()} );
 		 // Imgproc.calcHist(cs.obj.huearray, new MatOfInt(0),cs.obj.mask, cs.obj.hist, histSize, ranges);
 		  List<Mat> images = Arrays.asList(cs.obj.hsv.submat(lElementArray.get(0)));
@@ -86,8 +86,13 @@ public class CamShifting
 		  //Imgproc.calcHist(images, Arrays.asList(0),tempmask, cs.obj.hist, histSize, ranges);
 		  Imgproc.calcHist(images, Arrays.asList(0,1),tempmask, cs.obj.hist, histSize, ranges);
 		  
-		  Core.normalize(cs.obj.hist, cs.obj.hist);
-		  //Core.normalize(cs.obj.hist, cs.obj.hist, 0,255,Core.NORM_MINMAX);
+		  //Core.normalize(cs.obj.hist, cs.obj.hist);
+		  Core.normalize(cs.obj.hist, cs.obj.hist, 0,255,Core.NORM_MINMAX);
+		  /*for (int y = 0; y < cs.obj.hist.height(); y++) {
+		      for (int x = 0; x < cs.obj.hist.width(); x++) {
+		        	Log.i("Normalized Histogram", y + "," + x + " = " +  (cs.obj.hist.get(y, x)[0]));
+		      }
+		  }*/
 		  //cs.obj.prev_rect=lElementArray.get(0);
 		  cs.obj.prev_rect.x =  lElementArray.get(0).x - lROI.get(0).x;
 		  cs.obj.prev_rect.y =  lElementArray.get(0).y - lROI.get(0).y;
@@ -142,8 +147,8 @@ public class CamShifting
 		  
 		  List<Mat> images = Arrays.asList(cs.obj.hsv.submat(lROI.get(0)));	
 		  //List<Mat> images = Arrays.asList(cs.obj.huearray.get(0).submat(lROI.get(0)));		  
-		//Imgproc.calcBackProject(images, Arrays.asList(0),cs.obj.hist,cs.obj.prob, ranges,255);
-		Imgproc.calcBackProject(images, Arrays.asList(0, 1),cs.obj.hist,cs.obj.prob, ranges,1);
+		//Imgproc.calcBackProject(images, Arrays.asList(0,1),cs.obj.hist,cs.obj.prob, ranges,255);
+		Imgproc.calcBackProject(images, Arrays.asList(0,1),cs.obj.hist,cs.obj.prob, ranges,1);
 		Core.bitwise_and(cs.obj.prob,tempmask,cs.obj.prob,new Mat());
 		
 		cs.obj.curr_box=Video.CamShift(cs.obj.prob, cs.obj.prev_rect, new TermCriteria(TermCriteria.EPS,10,1));	

@@ -63,18 +63,16 @@ public class MouthRunnableThread  implements  Runnable{
 		List<Rect> mouths = new ArrayList<Rect>();
 
 
-		Log.i("MouthRunnableThread", "detect");
 		mouths = mouthDetector.detect(mGray, mouthROI);
 		//mouths = getMouthList(mRgba, mGray, mouthROI);
 		mouthRect = mouths.size() > 0 ? mouths.get(0) : null;
-		Log.i("MouthRunnableThread", "Finish detect");
+		mouthRect = mouth.update(mouthRect, delta);
 
 
 		mouthRect = mouths.size() > 0 ? mouths.get(0) : mouthRect;
 		
 		
 
-		Log.i("MouthRunnableThread", "End run");
 		/*mouthRect = mouth.update(
 		    mouths.size() > 0 ? mouths.get(0) : null, delta);*/
 

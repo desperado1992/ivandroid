@@ -67,16 +67,10 @@ public class EyeRunnableThread  implements  Runnable{
 		List<Rect> eyes = new ArrayList<Rect>();
 
 
-		Log.i("EyeRunnableThread", "detect");
 		eyes = getEyeList(mRgba, mGray, eyeROI);
-
-		Log.i("EyeRunnableThread", "Finish detect");
-
-
 		eyeRect = eyes.size() > 0 ? eyes.get(0) : null;
 
 
-		Log.i("EyeRunnableThread", "End run");
 		/*eyeRect = eye.update(eyeRect, delta);*/
 	    
 	    
@@ -100,7 +94,7 @@ public class EyeRunnableThread  implements  Runnable{
 
 						 /*Core.rectangle(mRgba, eyes.get(0).tl(), eyes.get(0).br(),
 								 EYE_COLOR, 3);*/
-						Log.i("EyeRunnableThread", "Calling create tracked object");
+						//Log.i("EyeRunnableThread", "Calling create tracked object");
 						cs.create_tracked_object(mRgba, eyes, Arrays.asList(mouthROI), cs);
 					}
 				}
@@ -112,7 +106,7 @@ public class EyeRunnableThread  implements  Runnable{
 				
 				if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
 						&& face_box.size.width > 1 && face_box.size.height > 1) {
-					Log.i("EyeRunnableThread", "Calling tracke face");
+					//Log.i("EyeRunnableThread", "Calling tracke face");
 					eyes = Arrays.asList(face_box.boundingRect());
 
 					eyes.get(0).x += mouthROI.x;
@@ -129,6 +123,13 @@ public class EyeRunnableThread  implements  Runnable{
 						eyes.get(0).x -= eyes.get(0).width /2;
 					}
 
+					double alpha = 2.0/3.0;
+					eyes.get(0).width *= alpha;
+					eyes.get(0).height *= alpha;
+					eyes.get(0).x += eyes.get(0).width * (1.0- alpha);
+					eyes.get(0).y += eyes.get(0).height * (1.0- alpha);
+					
+					
 					
 					
 					RotatedRect rrEllipse = face_box;

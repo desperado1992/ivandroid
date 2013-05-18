@@ -127,7 +127,6 @@ public class FaceTracker {
 		for (Rect faceRect : faces) {
 			Log.i("FaceTracker", "faces.size() > 0");
 			Point delta = face.getDelta();
-			delta = null;
 
 			
 			MouthRunnableThread rMouthThread = new MouthRunnableThread(mRgba, mGray,
@@ -246,48 +245,7 @@ public class FaceTracker {
 
 	}
 
-	private void getFacesList(Mat mRgba, Mat mGray) {
-		
-		if (!bFaceDetected) {
-			// for (int i = 0; i < facearray1.length; i++)
-			// Core.rectangle(mRgba, facearray1[i].tl(), facearray1[i].br(),
-			// FACE_COLOR, 3);
-
-			if (faceDetector != null) {
-				faces = faceDetector.detect(mGray);
-				if (faces.size() > 0) {
-					//for (int i = 0; i < faces.size(); i++)
-						/*Core.rectangle(mRgba, faces.get(i).tl(), faces.get(i)
-								.br(), FACE_COLOR, 3);*/
-
-					Log.i("FaceTracker", "Calling create tracked object");
-					List<Rect> lROI = Arrays.asList(new Rect(0,0, (int)mRgba.size().width, (int)mRgba.size().height));
-					cs.create_tracked_object(mRgba, faces, lROI, cs);
-				}
-			}
-
-		} else {
-			// track the face in the new frame
-
-			List<Rect> lROI = Arrays.asList(new Rect(0,0, (int)mRgba.size().width, (int)mRgba.size().height));
-			RotatedRect face_box = cs.camshift_track(mRgba, faces, lROI, cs);
-			//Core.ellipse(mRgba, face_box, FACE_COLOR, 6);
-			//Core.rectangle(mRgba, face_box.boundingRect().tl(), face_box.boundingRect().br(), FACE_COLOR, 3);
-
-			if (face_box != null && face_box.center.x > 0 && face_box.center.y > 0 
-					&& face_box.size.width > 10 && face_box.size.height > 10) {
-				Log.i("FaceTracker", "Calling tracke face");
-				faces = Arrays.asList(face_box.boundingRect());
-			}
-			else{
-				faces = new ArrayList<Rect>();
-			}
-
-			bFaceDetected = false;
-
-		}
-
-	}
+	
 
 	private void setSkinColor(Mat mRgba, Rect mouthRect, Rect leftEyeRect,
 			Rect rightEyeRect) {
@@ -316,77 +274,6 @@ public class FaceTracker {
 			skinColor[i] = (skinColor[i] + skinColor2[i]) / 2;
 		}
 		setToSkinColor(mRgba, mouthRect, skinColor, skinColor, 20, 60);
-	}
-
-	private Rect detectEye(Mat mGray, Rect faceRect, Point delta, Rect eyeROI,
-			TrackedFeature oTrackedFeature) {
-		// Detect eyes.
-		/*
-		 * Rect eyeROI = new Rect( faceRect.x, (int)(faceRect.y +
-		 * (faceRect.height / 5.5)), faceRect.width, (int)(faceRect.height /
-		 * 3.0));
-		 */
-
-		/*
-		 * Rect eyeROI = new Rect( faceRect.x, faceRect.y, faceRect.width,
-		 * (int)(faceRect.height / 2));
-		 */
-
-		// Rect eyeROI = faceRect;
-		List<Rect> eyes = eyeDetector.detect(mGray, eyeROI);
-
-		Rect eyeRect = eyes.size() > 0 ? eyes.get(0) : null;
-
-		eyeRect = oTrackedFeature.update(eyeRect, delta);
-
-		if (eyeRect == null) {
-			return null;
-		}
-
-		/*
-		 * int fix = (int)(eyeRect.width / 5.0); if(eyeRect.x > fix){ eyeRect.x
-		 * -= fix; eyeRect.width += fix; }
-		 */
-
-		return eyeRect;
-
-	}
-
-	private Rect detectMouth(Mat mGray, Rect faceRect, Point delta) {
-		// Detect mouth.
-		// /*
-		/*
-		 * Rect mouthROI = new Rect( faceRect.x, (int)(faceRect.y +
-		 * (faceRect.height / 1.55)), faceRect.width, (int)(faceRect.height /
-		 * 3.0));
-		 */
-
-		Rect mouthROI = new Rect(faceRect.x,
-				(int) (faceRect.y + (faceRect.height / 2)), faceRect.width,
-				(int) (faceRect.height / 2));
-
-		// Rect mouthROI = faceRect;
-
-		// drawRect(mRgba, mouthROI, FACE_COLOR);
-
-		List<Rect> mouths = mouthDetector.detect(mGray, mouthROI);
-
-		Rect mouthRect = mouth.update(mouths.size() > 0 ? mouths.get(0) : null,
-				delta);
-		if (mouthRect == null) {
-			return null;
-		}
-		/*
-		 * mouthRect.x += (faceRect.x + faceRect.width / 2) - (mouthRect.x +
-		 * mouthRect.width / 2);
-		 */
-		/*
-		 * fix = (int)(mouthRect.width / 12.0); mouthRect.x -= fix;
-		 * mouthRect.width += fix * 2;
-		 */
-		// drawRect(mRgba, mouthRect, MOUTH_COLOR);
-		// */
-		return mouthRect;
 	}
 
 	private double[] getSkinColor(Mat mRgba, Rect sample) {
